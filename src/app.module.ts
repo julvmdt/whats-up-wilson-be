@@ -1,10 +1,27 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLSchema } from 'graphql';
+import { mergeSchemas } from 'graphql-tools';
+
+import { UserResolver } from './user';
+import { DbModule } from './db';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    GraphQLModule.forRootAsync({
+      useFactory: async () => ({
+        context: ({ req, res }) => ({ req, res }),
+        debug: true,
+        playground: true,
+        transformSchema: (schema: GraphQLSchema) =>
+          mergeSchemas({
+            schemas: [schema],
+          }),
+        typePaths: ['./**/*.graphql'],
+      }),
+    }),
+    DbModule,
+  ],
+  providers: [UserResolver],
 })
 export class AppModule {}
