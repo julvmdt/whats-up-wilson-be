@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { CreateUserInput, User, UserInput } from './../graphql.schema';
+import { CreateUserInput, UserInput } from './../graphql.schema';
 import { UserService } from './user.service';
 
 @Resolver('User')
@@ -13,9 +13,7 @@ export class UserResolver {
   }
 
   @Query()
-  user(@Args('input') input: UserInput) {
-    return {
-      userName: 'Test',
-    } as User;
+  login(@Args('input') input: UserInput) {
+    return this.userService.loginUser(input.userName, input.password);
   }
 }

@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { GraphQLSchema } from 'graphql';
 import { mergeSchemas } from 'graphql-tools';
 
 import { UserResolver, UserService } from './user';
 import { DbModule } from './db';
+import { ConfigService } from './config.service';
+import { AuthMiddleware } from './user/auth.middleware';
 
 @Module({
   imports: [
@@ -22,6 +24,12 @@ import { DbModule } from './db';
     }),
     DbModule,
   ],
-  providers: [UserResolver, UserService],
+  providers: [UserResolver, UserService, ConfigService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes({ path: '/graphql', method: RequestMethod.POST });
+  }
+}

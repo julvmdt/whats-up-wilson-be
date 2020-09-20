@@ -4,15 +4,20 @@ input CreateUserInput {
 }
 
 input UserInput {
-  id: String!
+  userName: String!
+  password: String!
 }
 
 type User {
   userName: String!
 }
 
+type LoginResponse {
+  token: String!
+}
+
 type Query {
-  user(input: UserInput!): User!
+  login(input: UserInput!): LoginResponse!
 }
 
 type Mutation {

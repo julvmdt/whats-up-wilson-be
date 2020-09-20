@@ -12,15 +12,20 @@ export interface CreateUserInput {
 }
 
 export interface UserInput {
-    id: string;
+    userName: string;
+    password: string;
 }
 
 export interface User {
     userName: string;
 }
 
+export interface LoginResponse {
+    token: string;
+}
+
 export interface IQuery {
-    user(input: UserInput): User | Promise<User>;
+    login(input: UserInput): LoginResponse | Promise<LoginResponse>;
 }
 
 export interface IMutation {
