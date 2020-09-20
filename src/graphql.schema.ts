@@ -17,6 +17,7 @@ export interface UserInput {
 }
 
 export interface User {
+    id: number;
     userName: string;
 }
 
@@ -26,6 +27,7 @@ export interface LoginResponse {
 
 export interface IQuery {
     login(input: UserInput): LoginResponse | Promise<LoginResponse>;
+    users(): User[] | Promise<User[]>;
 }
 
 export interface IMutation {

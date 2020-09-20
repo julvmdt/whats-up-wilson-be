@@ -71,4 +71,8 @@ export class UserService {
       token,
     } as LoginResponse;
   }
+
+  async users() {
+    return this.userEntityRepository.find();
+  }
 }
