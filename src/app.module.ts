@@ -3,7 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { GraphQLSchema } from 'graphql';
 import { mergeSchemas } from 'graphql-tools';
 
-import { UserResolver } from './user';
+import { UserResolver, UserService } from './user';
 import { DbModule } from './db';
 
 @Module({
@@ -22,6 +22,6 @@ import { DbModule } from './db';
     }),
     DbModule,
   ],
-  providers: [UserResolver],
+  providers: [UserResolver, UserService],
 })
 export class AppModule {}

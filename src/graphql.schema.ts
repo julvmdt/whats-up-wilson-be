@@ -8,6 +8,7 @@
 /* eslint-disable */
 export interface CreateUserInput {
     userName: string;
+    password: string;
 }
 
 export interface UserInput {
