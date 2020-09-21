@@ -4,15 +4,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import * as moment from 'moment';
-
-import { ChatEntity, MessageEntity, UserEntity } from './../db';
-import { ConfigService } from './../config.service';
-import { LoginResponse } from '../graphql.schema';
+import { ChatEntity, MessageEntity } from './../db';
 import { UserService } from '../user';
 
 @Injectable()
@@ -25,7 +18,14 @@ export class ChatService {
     private readonly userService: UserService,
   ) {}
 
-  async createChat(userIds: number[]) {
+  async createChat(userIds: number[], userId: number) {
+    const findUserId = userIds.find(u => u === userId);
+    if (!findUserId) {
+      throw new UnauthorizedException(
+        'Failed creating a chat without the own user',
+      );
+    }
+
     const users = await this.userService.usersByList(userIds);
     const chatEntity = ChatEntity.of(users);
     return this.chatEntityRepository.save(chatEntity);
@@ -57,19 +57,26 @@ export class ChatService {
     );
   }
 
+  async getChat(chatId: number, userId: number) {
+    return this.chatEntityRepository
+      .createQueryBuilder('chat')
+      .innerJoinAndSelect('chat.users', 'user')
+      .where('user.id = :userId', { userId })
+      .andWhere('chat.id = :chatId', { chatId })
+      .getOne();
+  }
+
   async getChats(userId: number) {
     const user = await this.userService.usersByList([userId]);
     if (!user || user.length <= 0) {
       throw new BadRequestException('Sender not found');
     }
 
-    const chats = await this.chatEntityRepository
+    return await this.chatEntityRepository
       .createQueryBuilder('chat')
-      .innerJoinAndSelect('chat.users', 'users')
-      .where('users = :userId', { userId })
+      .innerJoinAndSelect('chat.users', 'user')
+      .where('user.id = :userId', { userId })
       .getMany();
-
-    return chats;
   }
 
   async getMessages(chatId: number) {
@@ -80,5 +87,17 @@ export class ChatService {
     });
 
     return chatEntity.messages;
+  }
+
+  async hasSeenMessages(chatId: number, userId: number) {
+    const chat = await this.getChat(chatId, userId);
+    const messages = await chat.messages;
+    for (const message of messages) {
+      const hasAlreadySeen = message.hasSeen.findIndex(u => u === userId) >= 0;
+      if (!hasAlreadySeen) {
+        message.hasSeen = [...message.hasSeen, userId];
+        await this.chatEntityRepository.manager.save(message);
+      }
+    }
   }
 }

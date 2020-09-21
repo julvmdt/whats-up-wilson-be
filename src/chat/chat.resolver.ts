@@ -2,24 +2,40 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import {
+  ChatInput,
   CreateChatInput,
-  CreateUserInput,
   SendMessageInput,
-  UserInput,
 } from './../graphql.schema';
 import { AuthGuard } from '../user/auth.guard';
-import { UserService } from '../user/user.service';
 import { ChatService } from './chat.service';
-import { CurrentUser } from 'src/user/current-user';
+import { CurrentUser } from '../user/current-user';
 
 @Resolver('Chat')
 export class ChatResolver {
   constructor(private readonly chatService: ChatService) {}
 
+  @Query()
+  @UseGuards(AuthGuard)
+  chat(
+    @Args('input') input: ChatInput,
+    @CurrentUser() currentUser: { sub: number },
+  ) {
+    return this.chatService.getChat(input.chatId, currentUser.sub);
+  }
+
+  @Query()
+  @UseGuards(AuthGuard)
+  chats(@CurrentUser() currentUser: { sub: number }) {
+    return this.chatService.getChats(currentUser?.sub);
+  }
+
   @Mutation()
   @UseGuards(AuthGuard)
-  createChat(@Args('input') input: CreateChatInput) {
-    return this.chatService.createChat(input.userIds);
+  createChat(
+    @Args('input') input: CreateChatInput,
+    @CurrentUser() currentUser: { sub: number },
+  ) {
+    return this.chatService.createChat(input.userIds, currentUser.sub);
   }
 
   @Mutation()
@@ -35,14 +51,12 @@ export class ChatResolver {
     );
   }
 
-  //   @Query()
-  //   login(@Args('input') input: UserInput) {
-  //     return this.userService.loginUser(input.userName, input.password);
-  //   }
-
-  //   @Query()
-  //   @UseGuards(AuthGuard)
-  //   users() {
-  //     return this.userService.users();
-  //   }
+  @Mutation()
+  @UseGuards(AuthGuard)
+  hasSeenMessages(
+    @Args('input') input: ChatInput,
+    @CurrentUser() currentUser: { sub: number },
+  ) {
+    return this.chatService.hasSeenMessages(input.chatId, currentUser.sub);
+  }
 }

@@ -78,7 +78,9 @@ export class UserService {
 
   async usersByList(userIds: number[]) {
     return this.userEntityRepository.find({
-      where: In(userIds)
-    })
+      where: {
+        id: In(userIds),
+      },
+    });
   }
 }

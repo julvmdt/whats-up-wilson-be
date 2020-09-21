@@ -4,6 +4,7 @@ import {
   Entity,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ChatEntity } from './chat.entity';
@@ -21,19 +22,23 @@ export class MessageEntity {
   message: string;
 
   @ManyToOne(
-    type => ChatEntity,
+    () => ChatEntity,
     chat => chat.messages,
   )
   chat: Promise<ChatEntity>;
 
-  @ManyToOne(type => UserEntity)
+  @ManyToOne(() => UserEntity)
   sender: Promise<UserEntity>;
+
+  @Column()
+  hasSeen: number[];
 
   static async of(message: string, sender: UserEntity, chat: ChatEntity) {
     const entity = new MessageEntity();
     entity.message = message;
     entity.sender = Promise.resolve(sender);
     entity.chat = Promise.resolve(chat);
+    entity.hasSeen = [];
 
     const messages = await chat.messages;
     chat.messages = Promise.resolve([...messages, entity]);

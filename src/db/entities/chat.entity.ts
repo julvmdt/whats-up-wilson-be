@@ -18,12 +18,12 @@ export class ChatEntity {
   id: number;
 
   @OneToMany(
-    type => MessageEntity,
+    () => MessageEntity,
     message => message.chat,
   )
   messages: Promise<MessageEntity[]>;
 
-  @ManyToMany(type => UserEntity)
+  @ManyToMany(() => UserEntity)
   @JoinTable()
   users: Promise<UserEntity[]>;
 
