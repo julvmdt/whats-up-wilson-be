@@ -1,12 +1,18 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UserEntity } from './entities';
+import { UserEntity, ChatEntity, MessageEntity } from './entities';
 
 @Global()
 @Module({
-  exports: [TypeOrmModule.forRoot(), TypeOrmModule.forFeature([UserEntity])],
-  imports: [TypeOrmModule.forRoot(), TypeOrmModule.forFeature([UserEntity])],
+  exports: [
+    TypeOrmModule.forRoot(),
+    TypeOrmModule.forFeature([UserEntity, ChatEntity, MessageEntity]),
+  ],
+  imports: [
+    TypeOrmModule.forRoot(),
+    TypeOrmModule.forFeature([UserEntity, ChatEntity, MessageEntity]),
+  ],
   providers: [],
 })
 export class DbModule {}

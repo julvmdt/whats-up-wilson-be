@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
@@ -74,5 +74,11 @@ export class UserService {
 
   async users() {
     return this.userEntityRepository.find();
+  }
+
+  async usersByList(userIds: number[]) {
+    return this.userEntityRepository.find({
+      where: In(userIds)
+    })
   }
 }

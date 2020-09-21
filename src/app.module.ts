@@ -3,10 +3,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { GraphQLSchema } from 'graphql';
 import { mergeSchemas } from 'graphql-tools';
 
-import { UserResolver, UserService } from './user';
+import { UserResolver, UserService, AuthMiddleware } from './user';
 import { DbModule } from './db';
 import { ConfigService } from './config.service';
-import { AuthMiddleware } from './user/auth.middleware';
+import { ChatResolver, ChatService } from './chat';
 
 @Module({
   imports: [
@@ -24,7 +24,13 @@ import { AuthMiddleware } from './user/auth.middleware';
     }),
     DbModule,
   ],
-  providers: [UserResolver, UserService, ConfigService],
+  providers: [
+    UserResolver,
+    UserService,
+    ConfigService,
+    ChatResolver,
+    ChatService,
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

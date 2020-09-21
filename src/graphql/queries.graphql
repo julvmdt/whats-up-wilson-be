@@ -8,6 +8,15 @@ input UserInput {
   password: String!
 }
 
+input CreateChatInput {
+  userIds: [Int!]
+}
+
+input SendMessageInput {
+  chatId: Int! 
+  message: String!
+}
+
 type User {
   id: Int!
   userName: String!
@@ -17,6 +26,16 @@ type LoginResponse {
   token: String!
 }
 
+type Message {
+  id: Int!
+  message: String!
+  sender: User!
+}
+
+type Chat {
+  id: Int!
+}
+
 type Query {
   login(input: UserInput!): LoginResponse!
   users: [User!]
@@ -24,4 +43,6 @@ type Query {
 
 type Mutation {
   createUser(input: CreateUserInput!): User!
+  createChat(input: CreateChatInput!): Chat!
+  sendMessage(input: SendMessageInput!): Message!
 }
