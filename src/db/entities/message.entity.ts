@@ -30,7 +30,7 @@ export class MessageEntity {
   @ManyToOne(() => UserEntity)
   sender: Promise<UserEntity>;
 
-  @Column()
+  @Column('int', { array: true, nullable: true })
   hasSeen: number[];
 
   static async of(message: string, sender: UserEntity, chat: ChatEntity) {

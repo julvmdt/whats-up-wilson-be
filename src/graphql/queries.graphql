@@ -34,11 +34,13 @@ type Message {
   id: Int!
   createdAt: String!
   message: String!
+  hasSeen: [Int!]
   sender: User!
 }
 
 type Chat {
   id: Int!
+  userIds: [Int!]
   messages: [Message!]
 }
 

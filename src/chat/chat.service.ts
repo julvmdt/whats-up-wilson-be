@@ -72,11 +72,21 @@ export class ChatService {
       throw new BadRequestException('Sender not found');
     }
 
-    return await this.chatEntityRepository
+    // many to many is always a trouble
+    const entitiesPlain = await this.chatEntityRepository
       .createQueryBuilder('chat')
       .innerJoinAndSelect('chat.users', 'user')
       .where('user.id = :userId', { userId })
+      .select('chat.id')
       .getMany();
+
+    const entities = [];
+    for (const chat of entitiesPlain) {
+      const entity = await this.chatEntityRepository.findOne(chat.id);
+      entities.push(entity);
+    }
+
+    return entities;
   }
 
   async getMessages(chatId: number) {
@@ -90,8 +100,9 @@ export class ChatService {
   }
 
   async hasSeenMessages(chatId: number, userId: number) {
-    const chat = await this.getChat(chatId, userId);
-    const messages = await chat.messages;
+    const chatEntity = await this.chatEntityRepository.findOne(chatId);
+
+    const messages = await chatEntity.messages;
     for (const message of messages) {
       const hasAlreadySeen = message.hasSeen.findIndex(u => u === userId) >= 0;
       if (!hasAlreadySeen) {
@@ -99,5 +110,6 @@ export class ChatService {
         await this.chatEntityRepository.manager.save(message);
       }
     }
+    return this.chatEntityRepository.findOne(chatId);
   }
 }

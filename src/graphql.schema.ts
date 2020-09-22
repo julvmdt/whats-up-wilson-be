@@ -42,11 +42,13 @@ export interface Message {
     id: number;
     createdAt: string;
     message: string;
+    hasSeen?: number[];
     sender: User;
 }
 
 export interface Chat {
     id: number;
+    userIds?: number[];
     messages?: Message[];
 }
 
