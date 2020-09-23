@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: wilsonbe-ingress
+  annotations:  
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/limit-rpm: "5"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://whats-up-wilson.ascripture.com"
+spec:
+  tls:
+  - hosts:
+    - backend-wilson.ascripture.com
+    secretName: letsencrypt-prod
+  rules:
+  - host: backend-wilson.ascripture.com
+    http:
+      paths:
+      - backend:
+          serviceName: wilsonbe-service
+          servicePort: 80

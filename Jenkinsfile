@@ -37,33 +37,33 @@ pipeline {
       }
     }
 
-    stage("Migrate Database") {
-      when {
-        branch 'master'
-      }
-      steps {
-        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '3e1eb5bb-2623-4710-bc80-9c81b8e90a86',
-        usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-          sh """\
-            TYPEORM_CONNECTION=postgres \
-            TYPEORM_HOST=ascripture-do-user-6179370-0.db.ondigitalocean.com \
-            TYPEORM_USERNAME=${USERNAME} \
-            TYPEORM_PASSWORD=${PASSWORD} \
-            TYPEORM_DATABASE=wilson \
-            TYPEORM_PORT=25060 \
-            TYPEORM_SYNCHRONIZE=false \
-            TYPEORM_LOGGING=error \
-            TYPEORM_MIGRATIONS=src/migrations/**.ts \
-            TYPEORM_MIGRATIONS_DIR=src/migrations \
-            TYPEORM_ENTITIES=src/**/**.entity.ts \
-            TYPEORM_ENTITIES_DIR=src/db/entities \
-            TYPEORM_DRIVER_EXTRA='{"ssl":true}' \
-            TYPEORM_CACHE=true \
-            npm run typeorm migration:run
-          """
-        }
-      }
-    }
+    // stage("Migrate Database") {
+    //   when {
+    //     branch 'master'
+    //   }
+    //   steps {
+    //     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '3e1eb5bb-2623-4710-bc80-9c81b8e90a86',
+    //     usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+    //       sh """\
+    //         TYPEORM_CONNECTION=postgres \
+    //         TYPEORM_HOST=ascripture-do-user-6179370-0.db.ondigitalocean.com \
+    //         TYPEORM_USERNAME=${USERNAME} \
+    //         TYPEORM_PASSWORD=${PASSWORD} \
+    //         TYPEORM_DATABASE=wilson \
+    //         TYPEORM_PORT=25060 \
+    //         TYPEORM_SYNCHRONIZE=false \
+    //         TYPEORM_LOGGING=error \
+    //         TYPEORM_MIGRATIONS=src/migrations/**.ts \
+    //         TYPEORM_MIGRATIONS_DIR=src/migrations \
+    //         TYPEORM_ENTITIES=src/**/**.entity.ts \
+    //         TYPEORM_ENTITIES_DIR=src/db/entities \
+    //         TYPEORM_DRIVER_EXTRA='{"ssl":true}' \
+    //         TYPEORM_CACHE=true \
+    //         npm run typeorm migration:run
+    //       """
+    //     }
+    //   }
+    // }
 
     stage("Deploy to k8s")  {
       when {

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wilsonbe-deployment
+  namespace: default
+  labels:
+    app: wilsonbe
+spec:
+  selector:
+    matchLabels:
+      app: wilsonbe
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wilsonbe
+    spec:
+      containers:
+        - image: ascripture/wilsonbe
+          imagePullPolicy: Always
+          name: wilsonbe
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+          envFrom:
+            - configMapRef:
+                name: wilsonbeconfig
+            - secretRef:
+                name: authsecret
+      imagePullSecrets:
+        - name: dockercred
