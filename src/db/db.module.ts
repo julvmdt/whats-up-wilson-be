@@ -6,7 +6,6 @@ import { UserEntity, ChatEntity, MessageEntity } from './entities';
 @Global()
 @Module({
   exports: [
-    TypeOrmModule.forRoot(),
     TypeOrmModule.forFeature([UserEntity, ChatEntity, MessageEntity]),
   ],
   imports: [
