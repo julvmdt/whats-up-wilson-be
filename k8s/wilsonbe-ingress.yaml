@@ -12,7 +12,7 @@ spec:
   tls:
   - hosts:
     - backend-wilson.ascripture.com
-    secretName: letsencrypt-prod
+    secretName: backend-wilson-cert
   rules:
   - host: backend-wilson.ascripture.com
     http:
