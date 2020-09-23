@@ -11,7 +11,7 @@ COPY package.json package-lock.json ./
 RUN npm install --production
 
 FROM node:lts-alpine
-WORKDIR /usr/local/stockmarketbe
+WORKDIR /usr/local/wilsonbe
 COPY --from=node_modules /tmp/node_modules ./node_modules
 COPY --from=dist /tmp/dist ./dist
 CMD ["node", "dist/main.js"]
