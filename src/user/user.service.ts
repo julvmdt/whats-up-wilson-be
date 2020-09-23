@@ -19,6 +19,7 @@ export class UserService {
   ) {}
 
   async createUser(userName: string, password: string) {
+    console.log(`try create user ${userName}`);
     if (!userName || userName === '') {
       throw new UnauthorizedException('No User Name provided');
     }
@@ -31,13 +32,17 @@ export class UserService {
       throw new UnauthorizedException('User already exists');
     }
 
+    console.log(`password valid? ${!password || password.length < 6}`);
     if (!password || password.length < 6) {
       throw new UnauthorizedException('Password is empty or to short');
     }
 
+    console.log('create entity and save');
     const createdUser = await UserEntity.of(userName, password);
+    const result = await this.userEntityRepository.save(createdUser);
 
-    return this.userEntityRepository.save(createdUser);
+    console.log('return entity');
+    return result;
   }
 
   async loginUser(userName: string, password: string) {
