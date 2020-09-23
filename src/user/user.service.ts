@@ -32,7 +32,7 @@ export class UserService {
       throw new UnauthorizedException('User already exists');
     }
 
-    console.log(`password valid? ${!password || password.length < 6}`);
+    console.log(`password invalid? ${!password || password.length < 6}`);
     if (!password || password.length < 6) {
       throw new UnauthorizedException('Password is empty or to short');
     }

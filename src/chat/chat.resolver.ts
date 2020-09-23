@@ -11,7 +11,7 @@ import {
 import { AuthGuard } from '../user/auth.guard';
 import { ChatService } from './chat.service';
 import { CurrentUser } from '../user/current-user';
-import { ChatEntity } from 'src/db';
+import { ChatEntity } from '../db';
 
 @Resolver('Chat')
 export class ChatResolver {
